@@ -203,44 +203,118 @@ function replaceElementVisually($old, $new) {
 }
 
 /**
- * Thanos snap / disintegration effect - canvas-based pixel dissolution
+ * Thanos snap / disintegration effect - letter by letter from right to left
  */
 function disintegrateMessage() {
-  html2canvas(messageEl).then($canvas => {    
-    // create the container we'll use to replace the element with
-    const $container = document.createElement("div");
-    $container.classList.add("disintegration-container");
-    
-    // setup the frames for animation
-    const $frames = generateFrames($canvas, NUM_FRAMES);
-    $frames.forEach(($frame, i) => {
-      $frame.style.transitionDelay = `${1.35 * i / $frames.length}s`;
-      $container.appendChild($frame);
+  const text = messageEl.textContent.trim();
+  
+  // Store all containers for cleanup
+  const allContainers = [];
+  
+  // Function to disintegrate a single letter element
+  function disintegrateLetter(letterSpan) {
+    return new Promise((resolve) => {
+      html2canvas(letterSpan).then($canvas => {
+        // Get the position of the letter
+        const rect = letterSpan.getBoundingClientRect();
+        
+        // Create container for this letter's particles
+        const $container = document.createElement("div");
+        $container.classList.add("disintegration-container");
+        $container.style.position = 'fixed';
+        $container.style.left = `${rect.left}px`;
+        $container.style.top = `${rect.top}px`;
+        $container.style.width = `${rect.width}px`;
+        $container.style.height = `${rect.height}px`;
+        $container.style.zIndex = '1000';
+        
+        allContainers.push($container);
+        
+        // Generate frames for this letter (fewer frames for performance)
+        const $frames = generateFrames($canvas, 64);
+        $frames.forEach(($frame, i) => {
+          $frame.style.transitionDelay = `${0.2 * i / $frames.length}s`;
+          $container.appendChild($frame);
+        });
+        
+        document.body.appendChild($container);
+        
+        // Hide the original letter
+        letterSpan.style.opacity = '0';
+        
+        // Trigger animation
+        $container.offsetLeft; // force reflow
+        
+        if (!DEBUG) {
+          $frames.forEach($frame => {
+            const randomRadian = 2 * Math.PI * (Math.random() - 0.5);
+            $frame.style.transform = `rotate(${15 * (Math.random() - 0.5)}deg) translate(${60 * Math.cos(randomRadian)}px, ${30 * Math.sin(randomRadian)}px) rotate(${15 * (Math.random() - 0.5)}deg)`;
+            $frame.style.opacity = 0;
+          });
+        }
+        
+        // Resolve after animation starts
+        setTimeout(resolve, 150);
+      }).catch(error => {
+        console.error('Failed to render letter:', error);
+        letterSpan.style.opacity = '0';
+        resolve();
+      });
     });
+  }
+  
+  // Main animation sequence
+  async function animateDisintegration() {
+    // Hide the original message
+    messageEl.style.visibility = 'hidden';
     
-    // then insert them into the DOM over the element
-    replaceElementVisually(messageEl, $container);
+    // Create a wrapper with individual letter spans
+    const wrapper = document.createElement('div');
+    wrapper.style.position = 'fixed';
+    const rect = messageEl.getBoundingClientRect();
+    wrapper.style.left = `${rect.left}px`;
+    wrapper.style.top = `${rect.top}px`;
+    wrapper.style.fontSize = window.getComputedStyle(messageEl).fontSize;
+    wrapper.style.color = window.getComputedStyle(messageEl).color;
+    wrapper.style.fontFamily = window.getComputedStyle(messageEl).fontFamily;
+    wrapper.style.lineHeight = window.getComputedStyle(messageEl).lineHeight;
+    wrapper.style.whiteSpace = 'pre';
     
-    // then animate them
-    $container.offsetLeft; // forces reflow, so CSS we apply below does transition
-    if (!DEBUG) {
-      // set the values the frame should animate to
-      // note that this is done after reflow so the transitions trigger
-      $frames.forEach($frame => {
-        const randomRadian = 2 * Math.PI * (Math.random() - 0.5);
-        $frame.style.transform = 
-          `rotate(${15 * (Math.random() - 0.5)}deg) translate(${60 * Math.cos(randomRadian)}px, ${30 * Math.sin(randomRadian)}px)
-rotate(${15 * (Math.random() - 0.5)}deg)`;
-        $frame.style.opacity = 0;
-      });
-    } else {
-      $frames.forEach($frame => {
-        $frame.style.animation = `debug-pulse 1s ease ${$frame.style.transitionDelay} infinite alternate`;
-      });
+    // Build the text with individual letter spans
+    const letterSpans = [];
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      const span = document.createElement('span');
+      span.textContent = char;
+      span.style.display = 'inline-block';
+      wrapper.appendChild(span);
+      if (char !== ' ') {
+        letterSpans.push(span);
+      }
     }
-  }).catch(error => {
-    // If html2canvas fails, gracefully hide the element without animation
-    console.error('Failed to render canvas for disintegration:', error);
+    
+    document.body.appendChild(wrapper);
+    
+    // Process letters from right to left
+    for (let i = letterSpans.length - 1; i >= 0; i--) {
+      await disintegrateLetter(letterSpans[i]);
+    }
+    
+    // Clean up after all animations complete
+    setTimeout(() => {
+      if (wrapper.parentNode) {
+        document.body.removeChild(wrapper);
+      }
+      allContainers.forEach(c => {
+        if (c.parentNode) {
+          c.parentNode.removeChild(c);
+        }
+      });
+    }, 1000);
+  }
+  
+  animateDisintegration().catch(error => {
+    console.error('Failed to animate disintegration:', error);
     messageEl.style.opacity = 0;
   });
 }
