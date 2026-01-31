@@ -12,7 +12,7 @@ body {
   align-items: center;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   background-color: #fef9f3;
-  transition: background-color 400ms ease;
+  transition: background-color 800ms ease;
   padding: 2rem;
 }
 
@@ -27,7 +27,7 @@ body {
   line-height: 1.6;
   margin-bottom: 3rem;
   opacity: 1;
-  transition: opacity 300ms ease;
+  transition: opacity 500ms ease;
 }
 
 .message.fade {
@@ -68,20 +68,37 @@ body {
 
 .dust-particle {
   position: absolute;
-  background-color: #5a5a5a;
   border-radius: 50%;
   pointer-events: none;
-  opacity: 1;
+  opacity: 0;
 }
 
 @keyframes dust-away {
   0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.5);
+  }
+  15% {
     opacity: 1;
-    transform: translate(0, 0) scale(1);
+    transform: translate(calc(var(--tx) * 0.1), calc(var(--ty) * 0.1)) scale(1);
   }
   100% {
     opacity: 0;
     transform: translate(var(--tx), var(--ty)) scale(0);
+  }
+}
+
+/* Smooth text fade for right-to-left dissolution */
+@keyframes text-dissolve {
+  0% {
+    opacity: 1;
+    filter: blur(0px);
+    clip-path: inset(0 0 0 0);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(2px);
+    clip-path: inset(0 0 0 100%);
   }
 }
 
@@ -90,5 +107,6 @@ body {
 }
 
 .message.disintegrating .original-text {
-  opacity: 0;
+  display: inline-block;
+  animation: text-dissolve 3500ms ease-in-out forwards;
 }

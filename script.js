@@ -132,17 +132,31 @@ function getRandomColor(currentColor) {
   return getRandomItem(availableColors);
 }
 
-// change message with fade transition
+// change message with fade transition - slower for smooth feel
 function changeMessage(newMessage) {
   messageEl.classList.add("fade");
   
   setTimeout(() => {
     messageEl.textContent = newMessage;
     messageEl.classList.remove("fade");
-  }, 300);
+  }, 500);
 }
 
-// Thanos snap / disintegration effect
+// Soft pastel particle colors for the disintegration effect
+const particleColors = [
+  "#b8a9c9", // soft lavender
+  "#f7cac9", // blush pink
+  "#91c8e4", // sky blue
+  "#c9e4ca", // mint green
+  "#f6d7b0", // peach
+  "#d4a5a5", // dusty rose
+  "#a7c7e7", // powder blue
+  "#c5b4e3", // soft purple
+  "#ffe5d9", // light coral
+  "#d0f0c0"  // tea green
+];
+
+// Thanos snap / disintegration effect - smooth right-to-left dissolution
 function disintegrateMessage() {
   const text = messageEl.textContent;
   const rect = messageEl.getBoundingClientRect();
@@ -155,8 +169,8 @@ function disintegrateMessage() {
   messageEl.appendChild(originalSpan);
   messageEl.classList.add('disintegrating');
   
-  // Create particles based on text
-  const particleCount = Math.min(text.length * 15, 200);
+  // Create particles based on text - more particles for smoother effect
+  const particleCount = Math.min(text.length * 20, 300);
   
   for (let i = 0; i < particleCount; i++) {
     const particle = document.createElement('div');
@@ -166,35 +180,50 @@ function disintegrateMessage() {
     const x = Math.random() * rect.width;
     const y = Math.random() * rect.height;
     
-    // Random size (1-3px)
-    const size = 1 + Math.random() * 2;
+    // Random size (1-4px) - varied sizes for organic feel
+    const size = 1 + Math.random() * 3;
     
-    // Random destination for animation
-    const tx = (Math.random() - 0.5) * 200 + (Math.random() > 0.5 ? 50 : -50);
-    const ty = -50 - Math.random() * 100;
+    // Drift primarily to the right and upward (Thanos style)
+    const tx = 80 + Math.random() * 150;  // Always drift right
+    const ty = -30 - Math.random() * 80 + (Math.random() - 0.5) * 40;  // Mostly up with some variation
     
-    // Random delay for staggered effect
-    const delay = Math.random() * 800;
-    const duration = 800 + Math.random() * 600;
+    // Right-to-left wave: particles on the right start first
+    // Calculate position ratio (0 = left edge, 1 = right edge)
+    const positionRatio = x / rect.width;
+    
+    // Base delay creates the right-to-left wave (right side starts first)
+    // Invert the ratio so right side (higher x) has lower delay
+    const waveDelay = (1 - positionRatio) * 2500;  // 0-2500ms spread for smooth wave
+    
+    // Add small random variation to prevent too mechanical look
+    const randomVariation = Math.random() * 400;
+    const delay = waveDelay + randomVariation;
+    
+    // Longer, smoother duration
+    const duration = 1800 + Math.random() * 1200;
+    
+    // Random pastel color for each particle
+    const color = particleColors[Math.floor(Math.random() * particleColors.length)];
     
     particle.style.cssText = `
       left: ${x}px;
       top: ${y}px;
       width: ${size}px;
       height: ${size}px;
+      background-color: ${color};
       --tx: ${tx}px;
       --ty: ${ty}px;
-      animation: dust-away ${duration}ms ease-out ${delay}ms forwards;
+      animation: dust-away ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94) ${delay}ms forwards;
     `;
     
     messageEl.appendChild(particle);
   }
   
-  // Clean up after animation
+  // Clean up after all animations complete (extended for slower effect)
   setTimeout(() => {
     messageEl.innerHTML = '';
     messageEl.classList.remove('disintegrating');
-  }, 2000);
+  }, 6000);
 }
 
 // change background color
@@ -221,10 +250,10 @@ function handleClick() {
     btn.disabled = true;
     btn.classList.add("hidden");
     
-    // Trigger Thanos snap effect after message is shown
+    // Trigger Thanos snap effect after message is shown - longer pause before dissolution
     setTimeout(() => {
       disintegrateMessage();
-    }, 2500);
+    }, 3000);
   } else {
     // Get message based on progression rules
     const newMessage = getMessageByProgression();
