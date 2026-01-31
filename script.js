@@ -9,10 +9,12 @@ const colors = [
 
 let clickCount = 0;
 const maxClicks = 7;
-const maxMessageRetryAttempts = 5;
 
 // track current background color explicitly
 let currentBackgroundColor = colors[0];
+
+// track shown messages to prevent repeats in the same session
+let shownMessages = new Set();
 
 const messageEl = document.getElementById("message");
 const btn = document.getElementById("btn");
@@ -20,6 +22,21 @@ const btn = document.getElementById("btn");
 // get a random item from an array
 function getRandomItem(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
+}
+
+// get a random message that hasn't been shown in this session
+function getRandomMessage() {
+  const availableMessages = messages.filter(m => !shownMessages.has(m));
+  
+  // if all messages have been shown, reset the tracking
+  if (availableMessages.length === 0) {
+    shownMessages = new Set();
+    return getRandomItem(messages);
+  }
+  
+  const message = getRandomItem(availableMessages);
+  shownMessages.add(message);
+  return message;
 }
 
 // get a random color that's different from current
@@ -56,16 +73,8 @@ function handleClick() {
     btn.disabled = true;
     btn.classList.add("hidden");
   } else {
-    // show random message
-    const currentMessage = messageEl.textContent;
-    let newMessage = getRandomItem(messages);
-    
-    // try to get a different message
-    let attempts = 0;
-    while (newMessage === currentMessage && attempts < maxMessageRetryAttempts) {
-      newMessage = getRandomItem(messages);
-      attempts++;
-    }
+    // show random message that hasn't been shown
+    const newMessage = getRandomMessage();
     
     changeMessage(newMessage);
     changeBackground();
@@ -74,7 +83,8 @@ function handleClick() {
 
 // initialize
 function init() {
-  messageEl.textContent = getRandomItem(messages);
+  const initialMessage = getRandomMessage();
+  messageEl.textContent = initialMessage;
   btn.addEventListener("click", handleClick);
 }
 
