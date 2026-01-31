@@ -156,6 +156,17 @@ const particleColors = [
   "#d0f0c0"  // tea green
 ];
 
+// Animation timing constants for the disintegration effect
+const PARTICLE_MIN_DRIFT_RIGHT = 80;
+const PARTICLE_DRIFT_RIGHT_RANGE = 150;
+const PARTICLE_MIN_DRIFT_UP = 30;
+const PARTICLE_DRIFT_UP_RANGE = 80;
+const PARTICLE_VERTICAL_VARIATION = 40;
+const WAVE_DELAY_MAX_MS = 2500;
+const WAVE_VARIATION_MS = 400;
+const PARTICLE_MIN_DURATION_MS = 1800;
+const PARTICLE_DURATION_RANGE_MS = 1200;
+
 // Thanos snap / disintegration effect - smooth right-to-left dissolution
 function disintegrateMessage() {
   const text = messageEl.textContent;
@@ -184,8 +195,8 @@ function disintegrateMessage() {
     const size = 1 + Math.random() * 3;
     
     // Drift primarily to the right and upward (Thanos style)
-    const tx = 80 + Math.random() * 150;  // Always drift right
-    const ty = -30 - Math.random() * 80 + (Math.random() - 0.5) * 40;  // Mostly up with some variation
+    const tx = PARTICLE_MIN_DRIFT_RIGHT + Math.random() * PARTICLE_DRIFT_RIGHT_RANGE;
+    const ty = -PARTICLE_MIN_DRIFT_UP - Math.random() * PARTICLE_DRIFT_UP_RANGE + (Math.random() - 0.5) * PARTICLE_VERTICAL_VARIATION;
     
     // Right-to-left wave: particles on the right start first
     // Calculate position ratio (0 = left edge, 1 = right edge)
@@ -193,14 +204,14 @@ function disintegrateMessage() {
     
     // Base delay creates the right-to-left wave (right side starts first)
     // Invert the ratio so right side (higher x) has lower delay
-    const waveDelay = (1 - positionRatio) * 2500;  // 0-2500ms spread for smooth wave
+    const waveDelay = (1 - positionRatio) * WAVE_DELAY_MAX_MS;
     
     // Add small random variation to prevent too mechanical look
-    const randomVariation = Math.random() * 400;
+    const randomVariation = Math.random() * WAVE_VARIATION_MS;
     const delay = waveDelay + randomVariation;
     
     // Longer, smoother duration
-    const duration = 1800 + Math.random() * 1200;
+    const duration = PARTICLE_MIN_DURATION_MS + Math.random() * PARTICLE_DURATION_RANGE_MS;
     
     // Random pastel color for each particle
     const color = particleColors[Math.floor(Math.random() * particleColors.length)];
@@ -219,11 +230,13 @@ function disintegrateMessage() {
     messageEl.appendChild(particle);
   }
   
-  // Clean up after all animations complete (extended for slower effect)
+  // Clean up after all animations complete
+  // Calculate based on max possible delay + max duration
+  const cleanupDelay = WAVE_DELAY_MAX_MS + WAVE_VARIATION_MS + PARTICLE_MIN_DURATION_MS + PARTICLE_DURATION_RANGE_MS + 500;
   setTimeout(() => {
     messageEl.innerHTML = '';
     messageEl.classList.remove('disintegrating');
-  }, 6000);
+  }, cleanupDelay);
 }
 
 // change background color
