@@ -1,0 +1,32 @@
+// Tier B — soft comfort (occasional)
+// Gentle reassurance, used sparingly
+const tierB = [
+  "you are doing okay",
+  "quiet is allowed",
+  "it's fine to rest here",
+  "you don't have to figure it out today",
+  "it's okay to not have answers",
+  "you are allowed to feel what you feel",
+  "gentle things take time",
+  "you deserve quiet moments",
+  "you can let your shoulders drop",
+  "it's okay if today is small",
+  "you can sit with this feeling",
+  "you don't have to be productive",
+  "rest is allowed",
+  "you can be gentle with yourself",
+  "you can stop trying for a moment",
+  "it's okay to just exist",
+  "you can let go a little",
+  "it's okay to slow down",
+  "you don't need permission to rest",
+  "you can stop holding everything",
+  "it's fine to just be",
+  "you are allowed to pause here",
+  "it's okay to be quiet inside",
+  "you can soften your thoughts",
+  "it's fine to stay here awhile",
+  "you can stop performing",
+  "this counts as resting",
+  "it's okay to do nothing impressively"
+];

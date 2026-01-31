@@ -1,0 +1,32 @@
+// Tier A — grounding (common)
+// Neutral, reread-safe, no emotional push
+const tierA = [
+  "nothing is urgent",
+  "this moment is enough",
+  "you can move slowly",
+  "nothing needs to happen right now",
+  "you can just breathe for a moment",
+  "this is a small pause for you",
+  "sometimes being still is enough",
+  "the world can wait a little",
+  "being here is enough",
+  "there is no rush",
+  "you are allowed to pause",
+  "nothing bad is happening here",
+  "this is enough for now",
+  "nothing needs an answer right now",
+  "you are safe in this moment",
+  "this is a quiet place",
+  "this moment can be soft",
+  "nothing important is being missed",
+  "nothing is expected of you",
+  "you can breathe again",
+  "this is not urgent",
+  "you can take your time",
+  "nothing dramatic is happening",
+  "nothing is being optimized",
+  "this can be easy for a moment",
+  "nothing needs your attention right now",
+  "this is allowed to be simple",
+  "this is a low-pressure moment"
+];
