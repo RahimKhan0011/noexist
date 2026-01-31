@@ -60,53 +60,24 @@ body {
   pointer-events: none;
 }
 
-/* Thanos snap / disintegration effect */
-.dust-container {
-  position: relative;
-  display: inline-block;
-}
-
-.dust-particle {
-  position: absolute;
-  border-radius: 50%;
+/* Canvas-based disintegration effect */
+.disintegration-container {
+  position: fixed;
   pointer-events: none;
-  opacity: 0;
+  z-index: 1000;
 }
 
-@keyframes dust-away {
-  0% {
-    opacity: 0;
-    transform: translate(0, 0) scale(0.5);
-  }
-  15% {
-    opacity: 1;
-    transform: translate(calc(var(--tx) * 0.1), calc(var(--ty) * 0.1)) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(var(--tx), var(--ty)) scale(0);
-  }
+.disintegration-container > canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transition: transform 1s ease-out, opacity 1s ease-out;
+  opacity: 1;
+  transform: rotate(0deg) translate(0px, 0px) rotate(0deg);
 }
 
-/* Smooth text fade for left-to-right dissolution */
-@keyframes text-dissolve {
-  0% {
-    opacity: 1;
-    filter: blur(0px);
-    clip-path: inset(0 0 0 0);
-  }
-  100% {
-    opacity: 0;
-    filter: blur(2px);
-    clip-path: inset(0 100% 0 0);
-  }
-}
-
-.message.disintegrating {
-  position: relative;
-}
-
-.message.disintegrating .original-text {
-  display: inline-block;
-  animation: text-dissolve 3500ms ease-in-out forwards;
+@keyframes debug-pulse {
+  0% { filter: none; }
+  95% { filter: none; }
+  100% { filter: drop-shadow(0 1px 0 rgba(255,0,0,1)); }
 }
