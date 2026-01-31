@@ -18,6 +18,7 @@ let currentBackgroundColor = colors[0];
 
 const messageEl = document.getElementById("message");
 const btn = document.getElementById("btn");
+const themeColorMeta = document.querySelector('meta[name="theme-color"]');
 
 // get a random item from an array
 function getRandomItem(arr) {
@@ -239,11 +240,16 @@ function disintegrateMessage() {
   }, cleanupDelay);
 }
 
-// change background color
+// change background color and browser theme-color
 function changeBackground() {
   const newColor = getRandomColor(currentBackgroundColor);
   currentBackgroundColor = newColor;
   document.body.style.backgroundColor = newColor;
+  
+  // Update browser theme-color (address bar on mobile browsers)
+  if (themeColorMeta) {
+    themeColorMeta.setAttribute('content', newColor);
+  }
 }
 
 // handle button click
