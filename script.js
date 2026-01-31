@@ -203,11 +203,10 @@ function replaceElementVisually($old, $new) {
 }
 
 /**
- * Thanos snap / disintegration effect - word by word, letter by letter from right to left
+ * Thanos snap / disintegration effect - letter by letter from right to left
  */
 function disintegrateMessage() {
   const text = messageEl.textContent.trim();
-  const words = text.split(' ');
   
   // Store all containers for cleanup
   const allContainers = [];
@@ -249,9 +248,7 @@ function disintegrateMessage() {
         if (!DEBUG) {
           $frames.forEach($frame => {
             const randomRadian = 2 * Math.PI * (Math.random() - 0.5);
-            $frame.style.transform = 
-              `rotate(${15 * (Math.random() - 0.5)}deg) translate(${60 * Math.cos(randomRadian)}px, ${30 * Math.sin(randomRadian)}px)
-rotate(${15 * (Math.random() - 0.5)}deg)`;
+            $frame.style.transform = `rotate(${15 * (Math.random() - 0.5)}deg) translate(${60 * Math.cos(randomRadian)}px, ${30 * Math.sin(randomRadian)}px) rotate(${15 * (Math.random() - 0.5)}deg)`;
             $frame.style.opacity = 0;
           });
         }
