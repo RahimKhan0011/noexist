@@ -142,6 +142,61 @@ function changeMessage(newMessage) {
   }, 300);
 }
 
+// Thanos snap / disintegration effect
+function disintegrateMessage() {
+  const text = messageEl.textContent;
+  const rect = messageEl.getBoundingClientRect();
+  
+  // Wrap original text in a span safely (avoid innerHTML for XSS prevention)
+  const originalSpan = document.createElement('span');
+  originalSpan.className = 'original-text';
+  originalSpan.textContent = text;
+  messageEl.textContent = '';
+  messageEl.appendChild(originalSpan);
+  messageEl.classList.add('disintegrating');
+  
+  // Create particles based on text
+  const particleCount = Math.min(text.length * 15, 200);
+  
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'dust-particle';
+    
+    // Random starting position within text bounds
+    const x = Math.random() * rect.width;
+    const y = Math.random() * rect.height;
+    
+    // Random size (1-3px)
+    const size = 1 + Math.random() * 2;
+    
+    // Random destination for animation
+    const tx = (Math.random() - 0.5) * 200 + (Math.random() > 0.5 ? 50 : -50);
+    const ty = -50 - Math.random() * 100;
+    
+    // Random delay for staggered effect
+    const delay = Math.random() * 800;
+    const duration = 800 + Math.random() * 600;
+    
+    particle.style.cssText = `
+      left: ${x}px;
+      top: ${y}px;
+      width: ${size}px;
+      height: ${size}px;
+      --tx: ${tx}px;
+      --ty: ${ty}px;
+      animation: dust-away ${duration}ms ease-out ${delay}ms forwards;
+    `;
+    
+    messageEl.appendChild(particle);
+  }
+  
+  // Clean up after animation
+  setTimeout(() => {
+    messageEl.innerHTML = '';
+    messageEl.classList.remove('disintegrating');
+  }, 2000);
+}
+
 // change background color
 function changeBackground() {
   const newColor = getRandomColor(currentBackgroundColor);
@@ -165,6 +220,11 @@ function handleClick() {
     hasEnded = true;
     btn.disabled = true;
     btn.classList.add("hidden");
+    
+    // Trigger Thanos snap effect after message is shown
+    setTimeout(() => {
+      disintegrateMessage();
+    }, 2500);
   } else {
     // Get message based on progression rules
     const newMessage = getMessageByProgression();

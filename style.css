@@ -59,3 +59,36 @@ body {
   opacity: 0;
   pointer-events: none;
 }
+
+/* Thanos snap / disintegration effect */
+.dust-container {
+  position: relative;
+  display: inline-block;
+}
+
+.dust-particle {
+  position: absolute;
+  background-color: #5a5a5a;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 1;
+}
+
+@keyframes dust-away {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--tx), var(--ty)) scale(0);
+  }
+}
+
+.message.disintegrating {
+  position: relative;
+}
+
+.message.disintegrating .original-text {
+  opacity: 0;
+}
