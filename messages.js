@@ -100,6 +100,36 @@ const messages = [
   "you deserve to feel at ease",
   "it's okay to feel everything deeply",
   "you are making progress"
+  "you can unclench a little",
+  "this can be easy for a moment",
+  "you don't need to hold everything",
+  "it's okay to be quiet inside",
+  "you can arrive without effort",
+  "nothing needs your attention right now",
+  "this is allowed to be simple",
+  "you can soften your thoughts",
+  "it's fine to stay here awhile",
+  "you are already enough",
+  "you can blink slowly",
+  "this is a low-pressure moment",
+  "no one is watching you here",
+  "you can stop performing",
+  "this counts as resting",
+  "it's okay to do nothing impressively",
+  "you are not late to this moment",
+  "you can just sit with the air",
+  "this is not urgent",
+  "you can take your time",
+  "imagine a very calm cloud",
+  "somewhere, a cat is napping",
+  "nothing dramatic is happening",
+  "this message has no agenda",
+  "pretend this is a windowsill",
+  "everything is fine in a small way",
+  "this sentence is just sitting here",
+  "you can exist like a houseplant",
+  "this moment is softly weird",
+  "nothing is being optimized"
 ];
 // ending messages shown after the final click
 const endingMessages = [
@@ -113,4 +143,9 @@ const endingMessages = [
   "we can stop here",
   "it's okay to leave now",
   "see you another time"
+  "okay, that's enough",
+  "we can stop now",
+  "that's it 🤍",
+  "all done, gently",
+  "time to wander off"
 ];
