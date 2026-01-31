@@ -143,23 +143,12 @@ function changeMessage(newMessage) {
   }, 500);
 }
 
-// Soft pastel particle colors for the disintegration effect
-const particleColors = [
-  "#b8a9c9", // soft lavender
-  "#f7cac9", // blush pink
-  "#91c8e4", // sky blue
-  "#c9e4ca", // mint green
-  "#f6d7b0", // peach
-  "#d4a5a5", // dusty rose
-  "#a7c7e7", // powder blue
-  "#c5b4e3", // soft purple
-  "#ffe5d9", // light coral
-  "#d0f0c0"  // tea green
-];
+// Single neutral color for the disintegration effect (non-colorful)
+const particleColor = "#5a5a5a"; // neutral grey matching text color
 
 // Animation timing constants for the disintegration effect
-const PARTICLE_MIN_DRIFT_RIGHT = 80;
-const PARTICLE_DRIFT_RIGHT_RANGE = 150;
+const PARTICLE_MIN_DRIFT_LEFT = 80;
+const PARTICLE_DRIFT_LEFT_RANGE = 150;
 const PARTICLE_MIN_DRIFT_UP = 30;
 const PARTICLE_DRIFT_UP_RANGE = 80;
 const PARTICLE_VERTICAL_VARIATION = 40;
@@ -168,7 +157,7 @@ const WAVE_VARIATION_MS = 400;
 const PARTICLE_MIN_DURATION_MS = 1800;
 const PARTICLE_DURATION_RANGE_MS = 1200;
 
-// Thanos snap / disintegration effect - smooth right-to-left dissolution
+// Thanos snap / disintegration effect - smooth left-to-right dissolution
 function disintegrateMessage() {
   const text = messageEl.textContent;
   const rect = messageEl.getBoundingClientRect();
@@ -195,17 +184,16 @@ function disintegrateMessage() {
     // Random size (1-4px) - varied sizes for organic feel
     const size = 1 + Math.random() * 3;
     
-    // Drift primarily to the right and upward (Thanos style)
-    const tx = PARTICLE_MIN_DRIFT_RIGHT + Math.random() * PARTICLE_DRIFT_RIGHT_RANGE;
+    // Drift to the left and upward (Thanos style - left to right dissolution)
+    const tx = -(PARTICLE_MIN_DRIFT_LEFT + Math.random() * PARTICLE_DRIFT_LEFT_RANGE);
     const ty = -PARTICLE_MIN_DRIFT_UP - Math.random() * PARTICLE_DRIFT_UP_RANGE + (Math.random() - 0.5) * PARTICLE_VERTICAL_VARIATION;
     
-    // Right-to-left wave: particles on the right start first
+    // Left-to-right wave: particles on the left start first
     // Calculate position ratio (0 = left edge, 1 = right edge)
     const positionRatio = x / rect.width;
     
-    // Base delay creates the right-to-left wave (right side starts first)
-    // Invert the ratio so right side (higher x) has lower delay
-    const waveDelay = (1 - positionRatio) * WAVE_DELAY_MAX_MS;
+    // Base delay creates the left-to-right wave (left side starts first)
+    const waveDelay = positionRatio * WAVE_DELAY_MAX_MS;
     
     // Add small random variation to prevent too mechanical look
     const randomVariation = Math.random() * WAVE_VARIATION_MS;
@@ -214,15 +202,12 @@ function disintegrateMessage() {
     // Longer, smoother duration
     const duration = PARTICLE_MIN_DURATION_MS + Math.random() * PARTICLE_DURATION_RANGE_MS;
     
-    // Random pastel color for each particle
-    const color = particleColors[Math.floor(Math.random() * particleColors.length)];
-    
     particle.style.cssText = `
       left: ${x}px;
       top: ${y}px;
       width: ${size}px;
       height: ${size}px;
-      background-color: ${color};
+      background-color: ${particleColor};
       --tx: ${tx}px;
       --ty: ${ty}px;
       animation: dust-away ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94) ${delay}ms forwards;
